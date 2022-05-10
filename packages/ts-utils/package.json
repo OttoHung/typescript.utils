@@ -1,0 +1,34 @@
+{
+  "name": "@ottohung/ts-utils",
+  "version": "0.1.0",
+  "description": "This package has some common scripts for sharing",
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-config-standard": "latest",
+    "eslint-plugin-import": "latest",
+    "eslint-plugin-n": "latest",
+    "eslint-plugin-promise": "latest",
+    "eslint-plugin-react": "latest",
+    "fs": "latest",
+    "jest": "^26.0.0",
+    "ts-jest": "^26.0.0",
+    "tsconfig-paths": "latest",
+    "ts-node": "latest",
+    "typescript": "latest",
+    "@types/jest": "^26.0.0",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "@types/node": "latest"
+  },
+  "repository": "git@github.com:OttoHung/typescript.packages.git",
+  "author": "Otto Hung <totsi04@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "ts-node -r tsconfig-paths/register src/clean.ts *.tsbuildinfo lib dist yarn-error.log",
+    "clean:install": "ts-node -r tsconfig-paths/register src/clean.ts node_modules",
+    "fix": "eslint . --fix --ext .ts",
+    "lint": "eslint . --ext .ts",
+    "test": "jest"
+  }
+}
