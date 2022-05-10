@@ -1,2 +1,2 @@
 # typescript.packages
-The modules reused by multiple repositories are resided in this repository
+The modules reused by multiple repositories reside in this repository
