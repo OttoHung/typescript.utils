@@ -26,6 +26,7 @@
     "clean:install": "ts-node -r tsconfig-paths/register packages/ts-utils/src/ts-clean.ts --installed packages/**/node_modules",
     "fix": "eslint . --fix --ext .ts",
     "lint": "eslint . --ext .ts",
+    "test": "yarn workspaces run test",
     "ts-utils": "yarn workspace ts-utils"
   },  
   "version": "0.1.0",
