@@ -1,0 +1,31 @@
+{
+  "author": "OttoHung <totsi04@gmail.com>",
+  "description": "Most used packages",
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-config-standard": "latest",
+    "eslint-plugin-react": "latest",
+    "jest": "^26.0.0",    
+    "tsconfig-paths": "latest",
+    "ts-jest": "^26.0.0",
+    "ts-node": "latest",
+    "typescript": "latest",
+    "@types/jest": "^26.0.0",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "@types/node": "latest"
+  },
+  "license": "MIT",
+  "name": "ts-packages",
+  "private": true,
+  "repository": "git@github.com:OttoHung/typescript.packages.git",
+  "scripts": {
+    "clean": "ts-node -r tsconfig-paths/register packages/ts-utils/src/ts-clean.ts packages/**/dist packages/**/lib packages/**/bin packages/**/*.log",
+    "clean:install": "ts-node -r tsconfig-paths/register packages/ts-utils/src/ts-clean.ts --installed packages/**/node_modules",
+    "ts-utils": "yarn workspace ts-utils"
+  },  
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ]
+}
