@@ -7,6 +7,7 @@ interface Arguments {
   files: string[],
   isCleanInstallOn?: boolean,
   isHelp?: boolean,
+  isDryRun?: boolean,
 }
 
 interface Commmands {
@@ -14,15 +15,18 @@ interface Commmands {
 }
 
 enum Command {
-    Installed = "Installed",
-    Help = "Help",
+    DryRun    = "DryRun",
+    Help        = "Help",
+    Installed   = "Installed",
 }
-
 
 const supportedCommands: Commmands = {
-    [Command.Installed]: ["-i", "--installed"]
+    [Command.Installed]: ["-i", "--installed"],
+    [Command.Help]: ["-h", "--help"],
+    [Command.DryRun]: ["--dry-run"],
 }
 
+const NESTED_DIRECTORY_PATH = "**/"
 const REGEX_NESTED_DIRECTORY = new RegExp("(.)?\\*\\*\\/.")
 const REGEX_WILDCARD_NAME = new RegExp("[a-zA-Z0-9_\\-\\/]*(\\*\\.).*")
 const DEFAULT_PATHS_TO_DELETE = [
@@ -41,10 +45,14 @@ const parseArgv = (argv: string[]): Arguments => {
   const result: Arguments = {files: []}
 
   argv.forEach(arg => {
-    if (supportedCommands[Command.Installed].includes(arg)) {
-      result.isCleanInstallOn = true
-    } else if (supportedCommands[Command.Help].includes(arg)) {
+    const lowercasedArg = arg.toLowerCase()
+
+    if (supportedCommands[Command.Installed].includes(lowercasedArg)) {
+        result.isCleanInstallOn = true
+    } else if (supportedCommands[Command.Help].includes(lowercasedArg)) {
         result.isHelp = true
+    } else if (supportedCommands[Command.DryRun].includes(lowercasedArg)) {
+        result.isDryRun = true
     } else if (!arg.startsWith("-")) {
       result.files.push(arg)
     }
@@ -79,44 +87,25 @@ const listSubDirectories = (dir: string): string[] => {
            .filter(dirPath => !isDotDot(dirPath) && isDirectory(dirPath))
 }
 
-const deleteFileOrDirectory = (dirOrFile: string) => {
-  console.log(`To delete ${dirOrFile}`)
-  if (!isExisting(dirOrFile)) {
-    return
-  }
+const deleteFileOrDirectory = (dirOrFile: string, isDryRun: boolean) => {
+    if (!isExisting(dirOrFile)) {
+        return
+    }
 
-  // TODO: Uncomment after test completed
-  // fs.rmSync(dirOrFile, {
-  //   force: true,
-  //   recursive: true
-  // })
-  console.log(`[Delete] ${TextColour.Red}${dirOrFile}${TextColour.Default} has been deleted`)
+    if (!isDryRun) {
+        fs.rmSync(dirOrFile, {
+        force: true,
+        recursive: true
+        })
+    }
+    console.log(`[Delete] ${TextColour.Red}${dirOrFile}${TextColour.Default} has been deleted`)
 }
 
-const cleanSubdirectoriesAndFiles = (dir: string, toDelete: string[]) => {
-  const toDeleteNext: string[] = []
-
-  toDelete.forEach(target => {    
-    if (REGEX_NESTED_DIRECTORY.test(target)) {      
-      const targetBasename = path.basename(target)
-      const targetPath = path.resolve(dir, targetBasename)
-      deleteFileOrDirectory(targetPath)
-
-      toDeleteNext.push(target)
-    } else if (REGEX_WILDCARD_NAME.test(target)) {
-      deleteFileOrDirectory(target)
-    } else {
-      const targetPath = path.resolve(dir, target)
-      deleteFileOrDirectory(targetPath)
-    }
-  })
-
-  if (toDeleteNext.length <= 0) {
-    return
-  }
-  
+const deleteSubFilesOrDirectories = (dir: string, targetBasename: string, isDryRun: boolean) => {
   listSubDirectories(dir).forEach(subDir => {
-    cleanSubdirectoriesAndFiles(subDir, toDeleteNext)
+    deleteFileOrDirectory(path.resolve(subDir, targetBasename), isDryRun)
+
+    deleteSubFilesOrDirectories(subDir, targetBasename, isDryRun)
   })
 }
 
@@ -150,7 +139,10 @@ const printHelp = () => {
     "",
     "Options:",
     "   -i or --installed:  To clean up `node_modules` directory in current folder",
-    "   -h or --help:       To show up descriptions",
+    "   -h or --help:       To show up descriptions.",
+    "   --dry-run:          Run clean up process but does not delete any file and directory.",
+    "                       Normally, this option is used when you want to confirm what file",
+    "                       and directory will be deleted."
   ]
 
   console.log(help.join("\n"))
@@ -175,5 +167,22 @@ if (argv.isHelp) {
   ]
     
   console.log(`Starts to clean directories and files from ${rootPath}\n`)
-  cleanSubdirectoriesAndFiles(rootPath, filesOrDirsToDelete.filter((item, index, array) => array.indexOf(item) === index))
+  const noDuplicatedFilesOrDirs = filesOrDirsToDelete.filter((item, index, array) => array.indexOf(item) === index)
+  const isDryRun = argv.isDryRun ?? false
+
+  noDuplicatedFilesOrDirs.forEach(fileOrDirToDelete => {
+    if (REGEX_NESTED_DIRECTORY.test(fileOrDirToDelete)) {
+      const dir = path.resolve(rootPath, fileOrDirToDelete.substring(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-2).replace(".", ""))
+
+      if (isExisting(dir)) {
+        const targetBasename = fileOrDirToDelete.substring(fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)+NESTED_DIRECTORY_PATH.length)
+        deleteSubFilesOrDirectories(dir, targetBasename, isDryRun)
+      }      
+    } else if (REGEX_WILDCARD_NAME.test(fileOrDirToDelete)) {
+      deleteFileOrDirectory(rootPath, isDryRun)
+    } else {
+      const targetPath = path.resolve(rootPath, fileOrDirToDelete)
+      deleteFileOrDirectory(targetPath, isDryRun)
+    }
+  })
 }
