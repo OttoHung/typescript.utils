@@ -4,7 +4,8 @@
   "devDependencies": {
     "eslint": "latest",
     "eslint-config-standard": "latest",
-    "eslint-plugin-react": "latest",
+    "eslint-plugin-jest": "latest",
+    "eslint-plugin-react": "latest",    
     "jest": "^26.0.0",    
     "tsconfig-paths": "latest",
     "ts-jest": "^26.0.0",
@@ -20,8 +21,11 @@
   "private": true,
   "repository": "git@github.com:OttoHung/typescript.packages.git",
   "scripts": {
+    "build": "yarn workspaces run build",
     "clean": "ts-node -r tsconfig-paths/register packages/ts-utils/src/ts-clean.ts packages/**/dist packages/**/lib packages/**/bin packages/**/*.log",
     "clean:install": "ts-node -r tsconfig-paths/register packages/ts-utils/src/ts-clean.ts --installed packages/**/node_modules",
+    "fix": "eslint . --fix --ext .ts",
+    "lint": "eslint . --ext .ts",
     "ts-utils": "yarn workspace ts-utils"
   },  
   "version": "0.1.0",

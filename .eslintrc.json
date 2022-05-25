@@ -1,11 +1,22 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "jest/globals": true
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended"
+        "plugin:jest/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "overrides": [
+        {
+            "files": ["test/**"],
+            "plugins": ["jest"],
+            "extends": ["plugin:jest/recommended"],
+            "rules": { "jest/prefer-expect-assertions": "off" }
+        }      
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -16,9 +27,15 @@
         "sourceType": "module"
     },
     "plugins": [
+        "jest",
         "react",
         "@typescript-eslint"
     ],
     "rules": {
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error",
+        "jest/prefer-to-have-length": "warn",
+        "jest/valid-expect": "error"
     }
 }
