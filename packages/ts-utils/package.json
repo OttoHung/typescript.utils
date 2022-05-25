@@ -12,10 +12,6 @@
   "repository": "git@github.com:OttoHung/typescript.packages.git",
   "scripts": {
     "build": "tsc",
-    "clean": "ts-node -r tsconfig-paths/register src/clean.ts",
-    "clean:install": "ts-node -r tsconfig-paths/register src/clean.ts --installed",
-    "fix": "eslint . --fix --ext .ts",
-    "lint": "eslint . --ext .ts",
     "test": "jest"
   },
   "version": "0.1.0"
