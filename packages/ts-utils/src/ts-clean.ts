@@ -6,6 +6,21 @@ import { ARG_START_POINT } from './utils'
 interface Arguments {
   files: string[],
   isCleanInstallOn?: boolean,
+  isHelp?: boolean,
+}
+
+interface Commmands {
+    [key: string]: string[]
+}
+
+enum Command {
+    Installed = "Installed",
+    Help = "Help",
+}
+
+
+const supportedCommands: Commmands = {
+    [Command.Installed]: ["-i", "--installed"]
 }
 
 const REGEX_NESTED_DIRECTORY = new RegExp("(.)?\\*\\*\\/.")
@@ -26,8 +41,10 @@ const parseArgv = (argv: string[]): Arguments => {
   const result: Arguments = {files: []}
 
   argv.forEach(arg => {
-    if (arg === "-i" || arg === "--installed") {
+    if (supportedCommands[Command.Installed].includes(arg)) {
       result.isCleanInstallOn = true
+    } else if (supportedCommands[Command.Help].includes(arg)) {
+        result.isHelp = true
     } else if (!arg.startsWith("-")) {
       result.files.push(arg)
     }
@@ -141,7 +158,7 @@ const printHelp = () => {
 
 const argv: Arguments = parseArgv(process.argv.slice(ARG_START_POINT))
 
-if (!argv.files || argv.files.length <= 0) {
+if (argv.isHelp) {
   printHelp()
 } else {
   let defaults = []
