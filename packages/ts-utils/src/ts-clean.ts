@@ -28,7 +28,6 @@ const supportedCommands: Commmands = {
 
 const NESTED_DIRECTORY_PATH = "**/"
 const REGEX_NESTED_DIRECTORY = new RegExp("(.)?\\*\\*\\/.")
-const REGEX_WILDCARD_NAME = new RegExp("[a-zA-Z0-9_\\-\\/]*(\\*\\.).*")
 const DEFAULT_PATHS_TO_DELETE = [
   "*.tsbuildinfo",
   "lib",
@@ -94,17 +93,17 @@ const deleteFileOrDirectory = (dirOrFile: string, isDryRun: boolean) => {
 
     if (!isDryRun) {
         fs.rmSync(dirOrFile, {
-        force: true,
-        recursive: true
+            force: true,
+            recursive: true
         })
     }
     console.log(`[Delete] ${TextColour.Red}${dirOrFile}${TextColour.Default} has been deleted`)
 }
 
 const deleteSubFilesOrDirectories = (dir: string, targetBasename: string, isDryRun: boolean) => {
-  listSubDirectories(dir).forEach(subDir => {
-    deleteFileOrDirectory(path.resolve(subDir, targetBasename), isDryRun)
+  deleteFileOrDirectory(path.resolve(dir, targetBasename), isDryRun)
 
+  listSubDirectories(dir).forEach(subDir => {
     deleteSubFilesOrDirectories(subDir, targetBasename, isDryRun)
   })
 }
@@ -173,13 +172,10 @@ if (argv.isHelp) {
   noDuplicatedFilesOrDirs.forEach(fileOrDirToDelete => {
     if (REGEX_NESTED_DIRECTORY.test(fileOrDirToDelete)) {
       const dir = path.resolve(rootPath, fileOrDirToDelete.substring(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-2).replace(".", ""))
-
-      if (isExisting(dir)) {
-        const targetBasename = fileOrDirToDelete.substring(fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)+NESTED_DIRECTORY_PATH.length)
-        deleteSubFilesOrDirectories(dir, targetBasename, isDryRun)
-      }      
-    } else if (REGEX_WILDCARD_NAME.test(fileOrDirToDelete)) {
-      deleteFileOrDirectory(rootPath, isDryRun)
+      console.log(`Sub to search: ${dir}`)
+      
+      const targetBasename = fileOrDirToDelete.substring(fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)+NESTED_DIRECTORY_PATH.length)
+      deleteSubFilesOrDirectories(dir, targetBasename, isDryRun)
     } else {
       const targetPath = path.resolve(rootPath, fileOrDirToDelete)
       deleteFileOrDirectory(targetPath, isDryRun)

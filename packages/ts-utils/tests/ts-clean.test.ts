@@ -59,7 +59,7 @@ describe("Delete folders and files", () => {
 
     test("Should delete a file", async () => {
         makeFile("./jest-test/abc.log")
-        expect(isExisting("./jest-test/abc.log")).toBeTruthy
+        expect(isExisting("./jest-test/abc.log")).toBeTruthy()
 
         execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/abc.log", {
             stdio: "inherit",
@@ -131,24 +131,31 @@ describe("Delete files and directories in the nested directory", () => {
     })
 
     test("Should delete a sub folder under the nested folders", async () => {
-        makeFolder("./jest-test/dist")
-        makeFolder("./jest-test/dist/bin")
+        makeFolder("./jest-test/bin")
+        makeFolder("./jest-test/pub")
+        makeFolder("./jest-test/pub/bin")
+
         makeFolder("./jest-test/nest")
-        makeFolder("./jest-test/nest/dist")
-        makeFolder("./jest-test/nest/dist/bin")
+        makeFolder("./jest-test/nest/bin")
         makeFolder("./jest-test/nest/lib")
-        makeFolder("./jest-test/nest/lib/dist")
-        makeFolder("./jest-test/nest/lib/dist/bin")
-        expect(isExisting("./jest-test/dist/bin")).toBeTruthy()
-        expect(isExisting("./jest-test/nest/dist/bin")).toBeTruthy()
-        expect(isExisting("./jest-test/nest/lib/dist/bin")).toBeTruthy()
+        makeFolder("./jest-test/nest/lib/bin")
+        makeFolder("./jest-test/nest/lib/pub")
+        makeFolder("./jest-test/nest/lib/pub/bin")
+
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/lib/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/lib/pub/bin")).toBeTruthy()
         
-        execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/**/dist/bin", {
+        execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/**/pub/bin", {
             stdio: "inherit",
         })
-        expect(isExisting("./jest-test/dist/bin")).toBeTruthy()
-        expect(isExisting("./jest-test/nest/dist/bin")).toBeFalsy()
-        expect(isExisting("./jest-test/nest/lib/dist/bin")).toBeFalsy()
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/pub/bin")).toBeFalsy()
+        expect(isExisting("./jest-test/nest/lib/pub/bin")).toBeFalsy()
     })
 
     test("Should delete a file in the nested folders", async () => {
