@@ -31,11 +31,10 @@ beforeAll(() => {
 })
 
 afterAll(() => {
-    // deleteFolder("jest-test")
+    deleteFolder("jest-test")
 })
 
-describe("Delete folders and files", () => {
-    //ts-node -r tsconfig-paths/register src/clean.ts *.tsbuildinfo lib dist yarn-error.log
+describe("Delete folders", () => {
     test("Should delete a folder", async () => {
         makeFolder("./jest-test/dist")
         expect(isExisting("./jest-test/dist")).toBeTruthy()
@@ -56,7 +55,9 @@ describe("Delete folders and files", () => {
         })
         expect(isExisting("./jest-test/dist/bin")).toBeFalsy()
     })
+})
 
+describe("Delete files", () => {
     test("Should delete a file", async () => {
         makeFile("./jest-test/abc.log")
         expect(isExisting("./jest-test/abc.log")).toBeTruthy()
@@ -111,7 +112,7 @@ describe("Delete folders and files", () => {
     })
 })
 
-describe("Delete files and directories in the nested directory", () => {
+describe("Delete directories in the nested directories", () => {
     test("Should delete a folder under the nested folders", async () => {
         makeFolder("./jest-test/bin")
         makeFolder("./jest-test/nest")
@@ -122,9 +123,10 @@ describe("Delete files and directories in the nested directory", () => {
         expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
         expect(isExisting("./jest-test/nest/dist/bin")).toBeTruthy()
 
-        execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/**/bin", {
+        execSync('ts-node -r tsconfig-paths/register src/ts-clean.ts "jest-test/**/bin"', {
             stdio: "inherit",
         })
+
         expect(isExisting("./jest-test/bin")).toBeTruthy()
         expect(isExisting("./jest-test/nest/bin")).toBeFalsy()
         expect(isExisting("./jest-test/nest/dist/bin")).toBeFalsy()
@@ -138,35 +140,131 @@ describe("Delete files and directories in the nested directory", () => {
         makeFolder("./jest-test/nest")
         makeFolder("./jest-test/nest/bin")
         makeFolder("./jest-test/nest/lib")
-        makeFolder("./jest-test/nest/lib/bin")
-        makeFolder("./jest-test/nest/lib/pub")
+        makeFolder("./jest-test/nest/lib/bin")        
         makeFolder("./jest-test/nest/lib/pub/bin")
+        makeFolder("./jest-test/nest/pub")
+        makeFolder("./jest-test/nest/pub/bin")
 
         expect(isExisting("./jest-test/bin")).toBeTruthy()
         expect(isExisting("./jest-test/pub/bin")).toBeTruthy()
         expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
-        expect(isExisting("./jest-test/nest/lib/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/pub/bin")).toBeTruthy()
         expect(isExisting("./jest-test/nest/lib/pub/bin")).toBeTruthy()
         
-        execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/**/pub/bin", {
+        execSync('ts-node -r tsconfig-paths/register src/ts-clean.ts "jest-test/**/pub/bin"', {
             stdio: "inherit",
         })
         expect(isExisting("./jest-test/bin")).toBeTruthy()
         expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
         expect(isExisting("./jest-test/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/lib/bin")).toBeTruthy()
         expect(isExisting("./jest-test/nest/pub/bin")).toBeFalsy()
         expect(isExisting("./jest-test/nest/lib/pub/bin")).toBeFalsy()
     })
+})
 
+describe("Delete files in the nested directories", () => {
     test("Should delete a file in the nested folders", async () => {
+        makeFolder("./jest-test/logs")
+        makeFolder("./jest-test/dist")
+        makeFolder("./jest-test/bin")
+        makeFile("./jest-test/0.log")
+        makeFile("./jest-test/logs/0.log")
+        makeFile("./jest-test/dist/0.log")
+        makeFile("./jest-test/bin/0.log")
+        expect(isExisting("./jest-test/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/logs/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/dist/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/0.log")).toBeTruthy()
 
+        execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/**/0.log", {
+            stdio: "inherit",
+        })
+        expect(isExisting("./jest-test/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/logs/0.log")).toBeFalsy()
+        expect(isExisting("./jest-test/dist/0.log")).toBeFalsy()
+        expect(isExisting("./jest-test/bin/0.log")).toBeFalsy()
+    })
+
+    test("Should delete a file in a folder in the nested folder", async () => {
+        makeFolder("./jest-test/logs")
+        makeFolder("./jest-test/dist")
+        makeFolder("./jest-test/bin")
+        makeFolder("./jest-test/tim")
+        makeFolder("./jest-test/bin/tim")
+        makeFile("./jest-test/0.log")
+        makeFile("./jest-test/logs/0.log")
+        makeFile("./jest-test/dist/0.log")
+        makeFile("./jest-test/bin/0.log")
+        makeFile("./jest-test/tim/0.log")
+        makeFile("./jest-test/bin/tim/0.log")
+        expect(isExisting("./jest-test/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/logs/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/dist/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/tim/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/tim/0.log")).toBeTruthy()
+
+        execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/**/tim/0.log", {
+            stdio: "inherit",
+        })
+        expect(isExisting("./jest-test/0.log")).toBeTruthy()        
+        expect(isExisting("./jest-test/logs/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/dist/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/tim/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/tim/0.log")).toBeFalsy()
     })
 
     test("Should delete files with wildcard in the nested folders", async () => {
-        
+        makeFolder("./jest-test/logs")
+        makeFolder("./jest-test/dist")
+        makeFolder("./jest-test/bin")
+        makeFile("./jest-test/0.log")
+        makeFile("./jest-test/logs/1.log")
+        makeFile("./jest-test/dist/2.log")
+        makeFile("./jest-test/bin/3.log")
+        expect(isExisting("./jest-test/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/logs/1.log")).toBeTruthy()
+        expect(isExisting("./jest-test/dist/2.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/3.log")).toBeTruthy()
+
+        execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/**/*.log", {
+            stdio: "inherit",
+        })
+        expect(isExisting("./jest-test/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/logs/1.log")).toBeFalsy()
+        expect(isExisting("./jest-test/dist/2.log")).toBeFalsy()
+        expect(isExisting("./jest-test/bin/3.log")).toBeFalsy()        
     })
-})
 
-describe("Run dry run", () => {
+    test("Should delete files in a folder with wildcard in the nested folders", async () => {
+        makeFolder("./jest-test/logs")
+        makeFolder("./jest-test/dist")
+        makeFolder("./jest-test/bin")
+        makeFolder("./jest-test/tim")
+        makeFolder("./jest-test/bin/tim")
+        makeFile("./jest-test/0.log")
+        makeFile("./jest-test/logs/1.log")
+        makeFile("./jest-test/dist/2.log")
+        makeFile("./jest-test/bin/3.log")
+        makeFile("./jest-test/tim/4.log")
+        makeFile("./jest-test/bin/tim/5.log")
+        expect(isExisting("./jest-test/0.log")).toBeTruthy()
+        expect(isExisting("./jest-test/logs/1.log")).toBeTruthy()
+        expect(isExisting("./jest-test/dist/2.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/3.log")).toBeTruthy()
+        expect(isExisting("./jest-test/tim/4.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/tim/5.log")).toBeTruthy()
 
+        execSync("ts-node -r tsconfig-paths/register src/ts-clean.ts jest-test/**/tim/*.log", {
+            stdio: "inherit",
+        })
+        expect(isExisting("./jest-test/0.log")).toBeTruthy()        
+        expect(isExisting("./jest-test/logs/1.log")).toBeTruthy()
+        expect(isExisting("./jest-test/dist/2.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/3.log")).toBeTruthy()
+        expect(isExisting("./jest-test/tim/4.log")).toBeTruthy()
+        expect(isExisting("./jest-test/bin/tim/5.log")).toBeFalsy()
+    })
 })
