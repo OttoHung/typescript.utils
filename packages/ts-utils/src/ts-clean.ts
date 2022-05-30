@@ -28,6 +28,7 @@ const supportedCommands: Commmands = {
 
 const NESTED_DIRECTORY_PATH = "**/"
 const REGEX_NESTED_DIRECTORY = new RegExp("(.)?\\*\\*\\/.")
+const REGEX_WILDCARD_NAME = new RegExp("[a-zA-Z0-9_\\-\\/]*(\\*\\.).*")
 const DEFAULT_PATHS_TO_DELETE = [
   "*.tsbuildinfo",
   "lib",
@@ -87,11 +88,11 @@ const listSubDirectories = (dir: string): string[] => {
 }
 
 const deleteFileOrDirectory = (dirOrFile: string, isDryRun: boolean) => {
-    if (!isExisting(dirOrFile)) {
+    if (!REGEX_WILDCARD_NAME.test(dirOrFile) && !isExisting(dirOrFile)) {
         return
     }
 
-    if (!isDryRun) {
+    if (!isDryRun) {      
         fs.rmSync(dirOrFile, {
             force: true,
             recursive: true
@@ -100,12 +101,11 @@ const deleteFileOrDirectory = (dirOrFile: string, isDryRun: boolean) => {
     console.log(`[Delete] ${TextColour.Red}${dirOrFile}${TextColour.Default} has been deleted`)
 }
 
-const deleteSubFilesOrDirectories = (dir: string, targetBasename: string, isDryRun: boolean) => {
-  deleteFileOrDirectory(path.resolve(dir, targetBasename), isDryRun)
-
-  listSubDirectories(dir).forEach(subDir => {
-    deleteSubFilesOrDirectories(subDir, targetBasename, isDryRun)
-  })
+const deleteSubFilesOrDirectories = (dir: string, targetBasename: string, isDryRun: boolean) => {    
+    listSubDirectories(dir).forEach(subDir => {
+        deleteFileOrDirectory(path.resolve(subDir, targetBasename), isDryRun)        
+        deleteSubFilesOrDirectories(subDir, targetBasename, isDryRun)
+    })
 }
 
 const printHelp = () => {
@@ -129,12 +129,12 @@ const printHelp = () => {
     "ts-clean supports `nested directory` syntax, it means you can clean up a particular",
     "file or directory recursively.",
     "For example, to clean up `node_modules` folder in a yarn workspace, you could enter:",
-    `   ${TextColour.Green}\${workspaceName}/**/node_modules${TextColour.Default}`,
+    `   ts-clean "${TextColour.Green}\${workspaceName}/**/node_modules${TextColour.Default}"`,
     "If you would like to clean up multipe files against the file extention name",
     "For instance, to clean up log files, you could enter:",
-    `   ${TextColour.Green}*.log${TextColour.Default}`,
+    `   ts-clean ${TextColour.Green}*.log${TextColour.Default}`,
     "Wildcard also can be used with nested directories as follows:",
-    `   ${TextColour.Green}\${workspaceName}/**/*.log${TextColour.Default}`,
+    `   ts-clean ${TextColour.Green}\${workspaceName}/**/*.log${TextColour.Default}`,
     "",
     "Options:",
     "   -i or --installed:  To clean up `node_modules` directory in current folder",
@@ -164,16 +164,14 @@ if (argv.isHelp) {
     ...defaults,
     ...argv.files || [],
   ]
-    
+ 
   console.log(`Starts to clean directories and files from ${rootPath}\n`)
   const noDuplicatedFilesOrDirs = filesOrDirsToDelete.filter((item, index, array) => array.indexOf(item) === index)
   const isDryRun = argv.isDryRun ?? false
 
   noDuplicatedFilesOrDirs.forEach(fileOrDirToDelete => {
     if (REGEX_NESTED_DIRECTORY.test(fileOrDirToDelete)) {
-      const dir = path.resolve(rootPath, fileOrDirToDelete.substring(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-2).replace(".", ""))
-      console.log(`Sub to search: ${dir}`)
-      
+      const dir = path.resolve(rootPath, fileOrDirToDelete.substring(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-1).replace(".", ""))      
       const targetBasename = fileOrDirToDelete.substring(fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)+NESTED_DIRECTORY_PATH.length)
       deleteSubFilesOrDirectories(dir, targetBasename, isDryRun)
     } else {
