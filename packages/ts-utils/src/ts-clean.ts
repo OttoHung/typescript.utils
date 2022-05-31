@@ -92,13 +92,16 @@ const deleteFileOrDirectory = (dirOrFile: string, isDryRun: boolean) => {
         return
     }
 
-    if (!isDryRun) {      
+    if (isDryRun) {
+        console.log(`[Dry Run] ${TextColour.Red}${dirOrFile}${TextColour.Default} will been deleted without '--dry-run'`)
+    } else {
         fs.rmSync(dirOrFile, {
             force: true,
             recursive: true
         })
+        console.log(`[Delete] ${TextColour.Red}${dirOrFile}${TextColour.Default} has been deleted`)
     }
-    console.log(`[Delete] ${TextColour.Red}${dirOrFile}${TextColour.Default} has been deleted`)
+    
 }
 
 const deleteSubFilesOrDirectories = (dir: string, targetBasename: string, isDryRun: boolean) => {    
