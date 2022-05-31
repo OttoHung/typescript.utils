@@ -270,7 +270,7 @@ describe("Delete files in the nested directories", () => {
     })
 })
 
-describe("Conduct dry run", () => {    
+describe("Conduct dry run option", () => {    
     describe("Delete folders", () => {
         test("Should delete a folder", async () => {
             makeFolder("./jest-test/dist")
@@ -506,4 +506,106 @@ describe("Conduct dry run", () => {
             expect(isExisting("./jest-test/bin/tim/5.log")).toBeTruthy()
         })
     })    
+})
+
+describe("Conduct exclude option", () => {
+    test("Should not delete a particular folder under the nested folders", async () => {
+        makeFolder("./jest-test/bin")
+        makeFolder("./jest-test/nest")
+        makeFolder("./jest-test/nest/bin")
+        makeFolder("./jest-test/nest/dist")
+        makeFolder("./jest-test/nest/dist/bin")
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/dist/bin")).toBeTruthy()
+
+        execSync('ts-node -r tsconfig-paths/register src/ts-clean.ts "jest-test/**/bin" --exclude=dist/bin', {
+            stdio: "inherit",
+        })
+
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeFalsy()
+        expect(isExisting("./jest-test/nest/dist/bin")).toBeTruthy()
+    })
+
+    test("Should not delete a particular folder under the nested folders in shorten option", async () => {
+        makeFolder("./jest-test/bin")
+        makeFolder("./jest-test/nest")
+        makeFolder("./jest-test/nest/bin")
+        makeFolder("./jest-test/nest/dist")
+        makeFolder("./jest-test/nest/dist/bin")
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/dist/bin")).toBeTruthy()
+
+        execSync('ts-node -r tsconfig-paths/register src/ts-clean.ts "jest-test/**/bin" -e=dist/bin', {
+            stdio: "inherit",
+        })
+
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeFalsy()
+        expect(isExisting("./jest-test/nest/dist/bin")).toBeTruthy()
+    })
+
+    test("Should delete a sub folder under the nested folders", async () => {
+        makeFolder("./jest-test/bin")
+        makeFolder("./jest-test/pub")
+        makeFolder("./jest-test/pub/bin")
+
+        makeFolder("./jest-test/nest")
+        makeFolder("./jest-test/nest/bin")
+        makeFolder("./jest-test/nest/lib")
+        makeFolder("./jest-test/nest/lib/bin")
+        makeFolder("./jest-test/nest/lib/pub")
+        makeFolder("./jest-test/nest/lib/pub/bin")
+        makeFolder("./jest-test/nest/pub")
+        makeFolder("./jest-test/nest/pub/bin")
+
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/lib/pub/bin")).toBeTruthy()
+        
+        execSync('ts-node -r tsconfig-paths/register src/ts-clean.ts "jest-test/**/pub/bin" --exclude=lib/pub/bin', {
+            stdio: "inherit",
+        })
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/lib/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/pub/bin")).toBeFalsy()
+        expect(isExisting("./jest-test/nest/lib/pub/bin")).toBeTruthy()
+    })
+
+    test("Should delete a sub folder under the nested folders in shorten option", async () => {
+        makeFolder("./jest-test/bin")
+        makeFolder("./jest-test/pub")
+        makeFolder("./jest-test/pub/bin")
+
+        makeFolder("./jest-test/nest")
+        makeFolder("./jest-test/nest/bin")
+        makeFolder("./jest-test/nest/lib")
+        makeFolder("./jest-test/nest/lib/bin")
+        makeFolder("./jest-test/nest/lib/pub")
+        makeFolder("./jest-test/nest/lib/pub/bin")
+        makeFolder("./jest-test/nest/pub")
+        makeFolder("./jest-test/nest/pub/bin")
+
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/lib/pub/bin")).toBeTruthy()
+        
+        execSync('ts-node -r tsconfig-paths/register src/ts-clean.ts "jest-test/**/pub/bin" -e=lib/pub/bin', {
+            stdio: "inherit",
+        })
+        expect(isExisting("./jest-test/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/pub/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/lib/bin")).toBeTruthy()
+        expect(isExisting("./jest-test/nest/pub/bin")).toBeFalsy()
+        expect(isExisting("./jest-test/nest/lib/pub/bin")).toBeTruthy()
+    })
 })

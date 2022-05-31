@@ -3,11 +3,17 @@ import path from 'path'
 import { TextColour } from './log'
 import { ARG_START_POINT } from './utils'
 
+interface Argument {
+    name: string,
+    value: string
+}
+
 interface Arguments {
-  files: string[],
-  isCleanInstallOn?: boolean,
-  isHelp?: boolean,
-  isDryRun?: boolean,
+    excludes?: string[],
+    files: string[],
+    isCleanInstallOn?: boolean,
+    isHelp?: boolean,
+    isDryRun?: boolean,
 }
 
 interface Commmands {
@@ -15,15 +21,17 @@ interface Commmands {
 }
 
 enum Command {
-    DryRun    = "DryRun",
+    DryRun      = "DryRun",
+    Exclude     = "Exclude",
     Help        = "Help",
-    Installed   = "Installed",
+    Installed   = "Installed",    
 }
 
 const supportedCommands: Commmands = {
-    [Command.Installed]: ["-i", "--installed"],
+    [Command.Exclude]: ["-e","--exclude"],
+    [Command.DryRun]: ["--dry-run"],  
     [Command.Help]: ["-h", "--help"],
-    [Command.DryRun]: ["--dry-run"],
+    [Command.Installed]: ["-i", "--installed"],
 }
 
 const NESTED_DIRECTORY_PATH = "**/"
@@ -41,18 +49,32 @@ const DEFAULT_INSTALL_TO_DELETE = [
 
 const rootPath = process.cwd()
 
+const parseArg = (arg: string): Argument => {
+    const equalIndex = arg.toLocaleLowerCase().indexOf("=")
+
+    return {
+        name: (equalIndex > 0) ? arg.slice(0, equalIndex) : arg,
+        value: (equalIndex > 0) ? arg.slice(equalIndex+1) : "",
+    }
+}
+
 const parseArgv = (argv: string[]): Arguments => {
   const result: Arguments = {files: []}
 
   argv.forEach(arg => {
-    const lowercasedArg = arg.toLowerCase()
+    const {name, value} = parseArg(arg)
 
-    if (supportedCommands[Command.Installed].includes(lowercasedArg)) {
+    if (supportedCommands[Command.Installed].includes(name)) {
         result.isCleanInstallOn = true
-    } else if (supportedCommands[Command.Help].includes(lowercasedArg)) {
+    } else if (supportedCommands[Command.Help].includes(name)) {
         result.isHelp = true
-    } else if (supportedCommands[Command.DryRun].includes(lowercasedArg)) {
+    } else if (supportedCommands[Command.DryRun].includes(name)) {
         result.isDryRun = true
+    } else if (supportedCommands[Command.Exclude].includes(name)) {
+        if (result.excludes === undefined) {
+            result.excludes = []
+        }
+        result.excludes.push(value)
     } else if (!arg.startsWith("-")) {
       result.files.push(arg)
     }
@@ -104,10 +126,20 @@ const deleteFileOrDirectory = (dirOrFile: string, isDryRun: boolean) => {
     
 }
 
-const deleteSubFilesOrDirectories = (dir: string, targetBasename: string, isDryRun: boolean) => {    
+const deleteSubFilesOrDirectories = (dir: string, targetBasename: string, isDryRun: boolean, excludes?: string[]) => {
     listSubDirectories(dir).forEach(subDir => {
-        deleteFileOrDirectory(path.resolve(subDir, targetBasename), isDryRun)        
-        deleteSubFilesOrDirectories(subDir, targetBasename, isDryRun)
+        const targetDir = path.resolve(subDir, targetBasename)
+        if (excludes === undefined) {
+            deleteFileOrDirectory(targetDir, isDryRun)
+        } else {            
+            excludes.forEach( exclude => {
+                if (!targetDir.endsWith(exclude)) {
+                    deleteFileOrDirectory(targetDir, isDryRun)
+                }
+            })
+        }
+
+        deleteSubFilesOrDirectories(subDir, targetBasename, isDryRun, excludes)
     })
 }
 
@@ -174,9 +206,9 @@ if (argv.isHelp) {
 
   noDuplicatedFilesOrDirs.forEach(fileOrDirToDelete => {
     if (REGEX_NESTED_DIRECTORY.test(fileOrDirToDelete)) {
-      const dir = path.resolve(rootPath, fileOrDirToDelete.substring(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-1).replace(".", ""))      
+      const dir = path.resolve(rootPath, fileOrDirToDelete.slice(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-1).replace(".", ""))      
       const targetBasename = fileOrDirToDelete.substring(fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)+NESTED_DIRECTORY_PATH.length)
-      deleteSubFilesOrDirectories(dir, targetBasename, isDryRun)
+      deleteSubFilesOrDirectories(dir, targetBasename, isDryRun, argv.excludes)
     } else {
       const targetPath = path.resolve(rootPath, fileOrDirToDelete)
       deleteFileOrDirectory(targetPath, isDryRun)
