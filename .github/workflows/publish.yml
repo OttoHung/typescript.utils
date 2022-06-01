@@ -1,11 +1,7 @@
 name: Publish packages
 on:
   release:
-<<<<<<< HEAD
-    types: [released]
-=======
-    types: [released]   
->>>>>>> c3251af (Bug Fix: release type should be release types)
+    types: [published]
 
 jobs:
   build:
