@@ -8,8 +8,11 @@
   },
   "description": "Utilities for yarn workspaces",
   "license": "MIT",
-  "name": "ts-utils",
-  "repository": "git@github.com:OttoHung/typescript.packages.git",
+  "name": "@ottohung/ts-utils",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": "git://github.com/ottohung/typescript.packages.git",
   "scripts": {
     "build": "tsc",
     "test": "jest"
