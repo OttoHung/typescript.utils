@@ -212,7 +212,7 @@ const printHelp = () => {
 
 const argv: Arguments = parseArgv(process.argv.slice(ARG_START_POINT))
 
-if (argv.isHelp) {
+if (argv.isHelp || argv.files.length === 0) {
   printHelp()
 } else {
   let defaults = []
