@@ -14,6 +14,7 @@ interface Arguments {
     isCleanInstallOn?: boolean,
     isHelp?: boolean,
     isDryRun?: boolean,
+    isRecommend?: boolean,
 }
 
 interface Commmands {
@@ -24,7 +25,8 @@ enum Command {
     DryRun      = "DryRun",
     Exclude     = "Exclude",
     Help        = "Help",
-    Installed   = "Installed",    
+    Installed   = "Installed",
+    Recommend   = "Recommend",
 }
 
 const supportedCommands: Commmands = {
@@ -32,11 +34,12 @@ const supportedCommands: Commmands = {
     [Command.DryRun]: ["--dry-run"],  
     [Command.Help]: ["-h", "--help"],
     [Command.Installed]: ["-i", "--installed"],
+    [Command.Recommend]: ["-r", "--recommend"],
 }
 
 const NESTED_DIRECTORY_PATH = "**/"
 const REGEX_NESTED_DIRECTORY = new RegExp("(.)?\\*\\*\\/.")
-const REGEX_WILDCARD_NAME = new RegExp("[a-zA-Z0-9_\\-\\/]*(\\*\\.).*")
+const REGEX_FILE_EXTENTION_WILDCARD_NAME = new RegExp("[a-zA-Z0-9_\\-\\/]*(\\*\\.).*")
 const DEFAULT_PATHS_TO_DELETE = [
   "*.tsbuildinfo",
   "lib",
@@ -75,6 +78,8 @@ const parseArgv = (argv: string[]): Arguments => {
             result.excludes = []
         }
         result.excludes.push(value)
+    } else if (supportedCommands[Command.Recommend].includes(name)) {
+        result.isRecommend = true
     } else if (!arg.startsWith("-")) {
       result.files.push(arg)
     }
@@ -109,8 +114,18 @@ const listSubDirectories = (dir: string): string[] => {
            .filter(dirPath => !isDotDot(dirPath) && isDirectory(dirPath))
 }
 
+const listFiles = (dir: string): string[] => {
+  if (isFile(dir)) {
+    return []
+  }
+
+  return fs.readdirSync(dir)
+           .map(fileOrDir => path.resolve(dir, fileOrDir))
+           .filter(fileOrDir => isFile(fileOrDir))
+}
+
 const deleteFileOrDirectory = (dirOrFile: string, isDryRun: boolean) => {
-    if (!REGEX_WILDCARD_NAME.test(dirOrFile) && !isExisting(dirOrFile)) {
+    if (!isExisting(dirOrFile)) {
         return
     }
 
@@ -128,17 +143,30 @@ const deleteFileOrDirectory = (dirOrFile: string, isDryRun: boolean) => {
 
 const deleteSubFilesOrDirectories = (dir: string, targetBasename: string, isDryRun: boolean, excludes?: string[]) => {
     listSubDirectories(dir).forEach(subDir => {
-        const targetDir = path.resolve(subDir, targetBasename)
-        if (excludes === undefined) {
-            deleteFileOrDirectory(targetDir, isDryRun)
-        } else {            
-            excludes.forEach( exclude => {
-                if (!targetDir.endsWith(exclude)) {
-                    deleteFileOrDirectory(targetDir, isDryRun)
+        const targetPaths: string[] = []
+
+        if (REGEX_FILE_EXTENTION_WILDCARD_NAME.test(targetBasename)) {
+            const extetion = targetBasename.replace("*", "")
+            listFiles(dir).forEach(file => {
+                if (file.endsWith(extetion)) {
+                    targetPaths.push(file)
                 }
             })
+        } else {
+            targetPaths.push(path.resolve(subDir, targetBasename))
         }
-
+        
+        targetPaths.forEach(target => {
+          if (excludes === undefined) {
+            deleteFileOrDirectory(target, isDryRun)
+          } else {
+            excludes.forEach(exclude => {
+                if (!target.endsWith(exclude)) {
+                    deleteFileOrDirectory(target, isDryRun)
+                }
+            })
+          }
+        })
         deleteSubFilesOrDirectories(subDir, targetBasename, isDryRun, excludes)
     })
 }
@@ -196,10 +224,10 @@ if (argv.isHelp) {
   }
 
   const filesOrDirsToDelete = [
-    ...defaults,
+    ...argv.isRecommend ? defaults : [],
     ...argv.files || [],
   ]
- 
+
   console.log(`Starts to clean directories and files from ${rootPath}\n`)
   const noDuplicatedFilesOrDirs = filesOrDirsToDelete.filter((item, index, array) => array.indexOf(item) === index)
   const isDryRun = argv.isDryRun ?? false
@@ -209,6 +237,13 @@ if (argv.isHelp) {
       const dir = path.resolve(rootPath, fileOrDirToDelete.slice(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-1).replace(".", ""))      
       const targetBasename = fileOrDirToDelete.substring(fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)+NESTED_DIRECTORY_PATH.length)
       deleteSubFilesOrDirectories(dir, targetBasename, isDryRun, argv.excludes)
+    } else if (REGEX_FILE_EXTENTION_WILDCARD_NAME.test(fileOrDirToDelete)) {
+      const extetion = fileOrDirToDelete.replace("*", "")
+      listFiles(rootPath).forEach(file => {
+          if (file.endsWith(extetion)) {
+            deleteFileOrDirectory(file, isDryRun)
+          }
+      })
     } else {
       const targetPath = path.resolve(rootPath, fileOrDirToDelete)
       deleteFileOrDirectory(targetPath, isDryRun)
