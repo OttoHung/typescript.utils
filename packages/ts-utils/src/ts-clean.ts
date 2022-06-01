@@ -85,6 +85,10 @@ const parseArgv = (argv: string[]): Arguments => {
     }
   })
 
+  if (argv.length === 0) {
+    result.isHelp = true
+  }
+
   return result
 }
 
@@ -212,7 +216,7 @@ const printHelp = () => {
 
 const argv: Arguments = parseArgv(process.argv.slice(ARG_START_POINT))
 
-if (argv.isHelp || argv.files.length === 0) {
+if (argv.isHelp) {
   printHelp()
 } else {
   let defaults = []
@@ -234,7 +238,8 @@ if (argv.isHelp || argv.files.length === 0) {
 
   noDuplicatedFilesOrDirs.forEach(fileOrDirToDelete => {
     if (REGEX_NESTED_DIRECTORY.test(fileOrDirToDelete)) {
-      const dir = path.resolve(rootPath, fileOrDirToDelete.slice(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-1).replace(".", ""))      
+      //replace the root sign
+      const dir = path.resolve(rootPath, fileOrDirToDelete.slice(0, fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)-1).replace(".", ""))
       const targetBasename = fileOrDirToDelete.substring(fileOrDirToDelete.indexOf(NESTED_DIRECTORY_PATH)+NESTED_DIRECTORY_PATH.length)
       deleteSubFilesOrDirectories(dir, targetBasename, isDryRun, argv.excludes)
     } else if (REGEX_FILE_EXTENTION_WILDCARD_NAME.test(fileOrDirToDelete)) {
