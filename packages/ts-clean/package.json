@@ -6,9 +6,9 @@
   "dependencies": {
     "fs": "latest"
   },
-  "description": "Utilities for yarn workspaces",
+  "description": "A tinny clean tool for yarn workspaces",
   "license": "MIT",
-  "name": "@ottohung/ts-utils",
+  "name": "@ottohung/ts-clean",
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com"    

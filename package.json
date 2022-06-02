@@ -19,7 +19,7 @@
   "license": "MIT",
   "name": "ts-packages",
   "private": true,
-  "repository": "git@github.com:OttoHung/typescript.packages.git",
+  "repository": "git@github.com:OttoHung/typescript.utils.git",
   "scripts": {
     "build": "yarn workspaces run build",
     "clean": "ts-node -r tsconfig-paths/register packages/ts-utils/src/ts-clean.ts packages/**/dist packages/**/lib packages/**/bin packages/**/*.log",
@@ -27,7 +27,7 @@
     "fix": "eslint . --fix --ext .ts",
     "lint": "eslint . --ext .ts",
     "test": "yarn workspaces run test",
-    "ts-utils": "yarn workspace ts-utils"
+    "ts-clean": "yarn workspace ts-clean"
   },  
   "version": "0.1.0",
   "workspaces": [
