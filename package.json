@@ -22,12 +22,12 @@
   "repository": "git@github.com:OttoHung/typescript.utils.git",
   "scripts": {
     "build": "yarn workspaces run build",
-    "clean": "ts-node -r tsconfig-paths/register packages/ts-utils/src/ts-clean.ts packages/**/dist packages/**/lib packages/**/bin packages/**/*.log",
-    "clean:install": "ts-node -r tsconfig-paths/register packages/ts-utils/src/ts-clean.ts --installed packages/**/node_modules",
+    "clean": "ts-node -r tsconfig-paths/register packages/ts-clean/src/ts-clean.ts packages/**/dist packages/**/lib packages/**/bin packages/**/*.log",
+    "clean:install": "ts-node -r tsconfig-paths/register packages/ts-clean/src/ts-clean.ts --installed packages/**/node_modules",
     "fix": "eslint . --fix --ext .ts",
     "lint": "eslint . --ext .ts",
     "test": "yarn workspaces run test",
-    "ts-clean": "yarn workspace ts-clean"
+    "ts-clean": "yarn workspace @ottohung/ts-clean"
   },  
   "version": "0.1.0",
   "workspaces": [

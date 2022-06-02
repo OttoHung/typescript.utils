@@ -13,7 +13,7 @@
     "access": "public",
     "registry": "https://npm.pkg.github.com"    
   },
-  "repository": "git://github.com/ottohung/typescript.packages.git",
+  "repository": "git://github.com/ottohung/typescript.utils.git",
   "scripts": {
     "build": "tsc",
     "test": "jest"
