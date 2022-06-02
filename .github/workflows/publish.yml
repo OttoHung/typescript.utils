@@ -1,8 +1,14 @@
 name: Publish packages
 on:
   release:
-    types: 
-      - released
+    types: [released]
+
+  workflow_dispatch:
+    inputs:
+      workspace_name:
+        description: "The folder name of package in the workspace to publish"
+        required: true
+        type: string
 
 jobs:
   build:
@@ -23,7 +29,14 @@ jobs:
         run: yarn install
       - name: Build packages
         run: yarn build
-      - name: Publish packages
+      - name: Publish all packages
+        if: ${{ github.event.inputs.workspace_name == "" }}
         run: yarn publish packages/*
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish ${{ github.event.inputs.workspace_name }}
+        if: ${{ github.event.inputs.workspace_name != "" }}
+        run: yarn publish packages/${{ github.event.inputs.workspace_name }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
