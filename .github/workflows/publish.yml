@@ -31,7 +31,7 @@ jobs:
       - name: Build packages
         run: yarn build
       - name: Publish all packages
-        if: ${{ github.event_name == 'released' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workspace_name == 'all') }}
+        if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workspace_name == 'all') }}
         run: yarn publish packages/*
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
