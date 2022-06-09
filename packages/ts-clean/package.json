@@ -1,6 +1,7 @@
 {
   "author": "OttoHung <totsi04@gmail.com>",
   "bin": {
+    "@ottohung/ts-clean": "./bin/ts-clean.js",
     "ts-clean": "./bin/ts-clean.js"
   },
   "dependencies": {
