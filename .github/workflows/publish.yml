@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       workspace_name:
-        description: "The folder name of package in the workspace to publish"
+        description: 'The folder name of package in the workspace to publish'
         required: true
         type: string
         default: "all"
@@ -24,19 +24,19 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: "16.x"
-          registry-url: "https://npm.pkg.github.com"
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
       - name: Install modules
         run: yarn install
       - name: Build packages
         run: yarn build
       - name: Publish all packages
-        if: ${{ github.event_name == "released" || (github.event_name == "workflow_dispatch" && github.event.inputs.workspace_name == "all") }}
+        if: ${{ github.event_name == 'released' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workspace_name == 'all') }}
         run: yarn publish packages/*
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish ${{ github.event.inputs.workspace_name }}
-        if: ${{ github.event_name == "workflow_dispatch" && github.event.inputs.workspace_name != "all" }}
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.workspace_name != 'all' }}
         run: yarn publish packages/${{ github.event.inputs.workspace_name }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
