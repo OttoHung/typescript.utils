@@ -1,7 +1,7 @@
 {
   "author": "OttoHung <totsi04@gmail.com>",
   "bin": {
-    "clean": "./dist/clean.js"
+    "ts-clean": "./bin/ts-clean.js"
   },
   "dependencies": {
     "fs": "latest"
