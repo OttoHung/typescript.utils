@@ -9,6 +9,7 @@ on:
         description: "The folder name of package in the workspace to publish"
         required: true
         type: string
+        default: "all"
 
 jobs:
   build:
@@ -30,12 +31,12 @@ jobs:
       - name: Build packages
         run: yarn build
       - name: Publish all packages
-        if: ${{ github.event.inputs.workspace_name == "" }}
+        if: ${{ github.event_name == "released" || (github.event_name == "workflow_dispatch" && github.event.inputs.workspace_name == "all") }}
         run: yarn publish packages/*
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish ${{ github.event.inputs.workspace_name }}
-        if: ${{ github.event.inputs.workspace_name != "" }}
+        if: ${{ github.event_name == "workflow_dispatch" && github.event.inputs.workspace_name != "all" }}
         run: yarn publish packages/${{ github.event.inputs.workspace_name }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
