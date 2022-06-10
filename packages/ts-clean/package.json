@@ -8,6 +8,7 @@
     "fs": "latest"
   },
   "description": "A tinny clean tool for yarn workspaces",
+  "files": ["bin/*.js", "package.json", "README.md", "LICENSE"],
   "license": "MIT",
   "name": "@ottohung/ts-clean",
   "publishConfig": {
