@@ -62,10 +62,10 @@ const parseArg = (arg: string): Argument => {
     }
 }
 
-const parseArgv = (argv: string[]): Arguments => {
+const parseArgv = (args: string[]): Arguments => {
   const result: Arguments = {files: []}
 
-  argv.forEach(arg => {
+  args.forEach(arg => {
     const {name, value} = parseArg(arg)
 
     if (supportedCommands[Command.Installed].includes(name)) {
@@ -86,7 +86,7 @@ const parseArgv = (argv: string[]): Arguments => {
     }
   })
 
-  if (argv.length === 0) {
+  if (args.length === 0) {
     result.isHelp = true
   }
 
