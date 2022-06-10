@@ -49,6 +49,7 @@ const DEFAULT_PATHS_TO_DELETE = [
 ]
 const DEFAULT_INSTALL_TO_DELETE = [
   "node_modules",
+  "/**/node_modules",
 ]
 
 const rootPath = process.cwd()
@@ -220,16 +221,9 @@ const argv: Arguments = parseArgv(process.argv.slice(ARG_START_POINT))
 if (argv.isHelp) {
   printHelp()
 } else {
-  let defaults = []
-
-  if (argv.isCleanInstallOn) {
-    defaults = DEFAULT_INSTALL_TO_DELETE
-  } else {
-    defaults = DEFAULT_PATHS_TO_DELETE
-  }
-
   const filesOrDirsToDelete = [
-    ...argv.isRecommend ? defaults : [],
+    ...argv.isRecommend ? DEFAULT_PATHS_TO_DELETE : [],
+    ...argv.isCleanInstallOn ? DEFAULT_INSTALL_TO_DELETE : [],
     ...argv.files || [],
   ]
 
