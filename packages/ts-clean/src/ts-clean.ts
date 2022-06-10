@@ -46,6 +46,7 @@ const DEFAULT_PATHS_TO_DELETE = [
   "lib",
   "dist",
   "yarn-error.log",
+  "bin",
 ]
 const DEFAULT_INSTALL_TO_DELETE = [
   "node_modules",
