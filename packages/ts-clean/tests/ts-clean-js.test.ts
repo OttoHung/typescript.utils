@@ -44,7 +44,7 @@ describe("Delete folders", () => {
         makeFolder(`./${ROOT_NAME}/dist`)
         expect(isExisting(`./${ROOT_NAME}/dist`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/dist`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/dist`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/dist`)).toBeFalsy()
@@ -55,7 +55,7 @@ describe("Delete folders", () => {
         makeFolder(`./${ROOT_NAME}/dist/bin`)
         expect(isExisting(`./${ROOT_NAME}/dist/bin`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/dist/bin`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/dist/bin`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/dist/bin`)).toBeFalsy()
@@ -67,7 +67,7 @@ describe("Delete files", () => {
         makeFile(`./${ROOT_NAME}/abc.log`)
         expect(isExisting(`./${ROOT_NAME}/abc.log`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/abc.log`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/abc.log`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/abc.log`)).toBeFalsy()
@@ -78,7 +78,7 @@ describe("Delete files", () => {
         makeFile(`./${ROOT_NAME}/logs/def.log`)
         expect(isExisting(`./${ROOT_NAME}/logs/def.log`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/logs/def.log`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/logs/def.log`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/logs/def.log`)).toBeFalsy()
@@ -92,7 +92,7 @@ describe("Delete files", () => {
             expect(isExisting(`./${ROOT_NAME}/${i}.log`)).toBeTruthy()
         }
         
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/*.log`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/*.log`, {
             stdio: "inherit",
         })
         for (let i = 0 ; i < 10 ; i++) {
@@ -108,7 +108,7 @@ describe("Delete files", () => {
             expect(isExisting(`./${ROOT_NAME}/logs/${i}.log`)).toBeTruthy()
         }
         
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/logs/*.log`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/logs/*.log`, {
             stdio: "inherit",
         })
         for (let i = 0 ; i < 10 ; i++) {
@@ -128,7 +128,7 @@ describe("Delete directories in the nested directories", () => {
         expect(isExisting(`./${ROOT_NAME}/nest/bin`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/nest/dist/bin`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js "${ROOT_NAME}/**/bin"`, {
+        execSync(`node bin/ts-clean.js "${ROOT_NAME}/**/bin"`, {
             stdio: "inherit",
         })
 
@@ -157,7 +157,7 @@ describe("Delete directories in the nested directories", () => {
         expect(isExisting(`./${ROOT_NAME}/nest/pub/bin`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/nest/lib/pub/bin`)).toBeTruthy()
         
-        execSync(`node dist/ts-clean.js "${ROOT_NAME}/**/pub/bin"`, {
+        execSync(`node bin/ts-clean.js "${ROOT_NAME}/**/pub/bin"`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/bin`)).toBeTruthy()
@@ -183,7 +183,7 @@ describe("Delete files in the nested directories", () => {
         expect(isExisting(`./${ROOT_NAME}/dist/0.log`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/bin/0.log`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/**/0.log`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/**/0.log`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/0.log`)).toBeTruthy()
@@ -211,7 +211,7 @@ describe("Delete files in the nested directories", () => {
         expect(isExisting(`./${ROOT_NAME}/tim/0.log`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/bin/tim/0.log`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/**/tim/0.log`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/**/tim/0.log`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/0.log`)).toBeTruthy()        
@@ -235,7 +235,7 @@ describe("Delete files in the nested directories", () => {
         expect(isExisting(`./${ROOT_NAME}/dist/2.log`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/bin/3.log`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/**/*.log`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/**/*.log`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/0.log`)).toBeTruthy()
@@ -263,7 +263,7 @@ describe("Delete files in the nested directories", () => {
         expect(isExisting(`./${ROOT_NAME}/tim/4.log`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/bin/tim/5.log`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js ${ROOT_NAME}/**/tim/*.log`, {
+        execSync(`node bin/ts-clean.js ${ROOT_NAME}/**/tim/*.log`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/0.log`)).toBeTruthy()        
@@ -281,7 +281,7 @@ describe("Conduct dry run", () => {
             makeFolder(`./${ROOT_NAME}/dist`)
             expect(isExisting(`./${ROOT_NAME}/dist`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/dist --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/dist --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/dist`)).toBeTruthy()
@@ -292,7 +292,7 @@ describe("Conduct dry run", () => {
             makeFolder(`./${ROOT_NAME}/dist/bin`)
             expect(isExisting(`./${ROOT_NAME}/dist/bin`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/dist/bin --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/dist/bin --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/dist/bin`)).toBeTruthy()
@@ -304,7 +304,7 @@ describe("Conduct dry run", () => {
             makeFile(`./${ROOT_NAME}/abc.log`)
             expect(isExisting(`./${ROOT_NAME}/abc.log`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/abc.log --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/abc.log --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/abc.log`)).toBeTruthy()
@@ -315,7 +315,7 @@ describe("Conduct dry run", () => {
             makeFile(`./${ROOT_NAME}/logs/def.log`)
             expect(isExisting(`./${ROOT_NAME}/logs/def.log`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/logs/def.log --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/logs/def.log --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/logs/def.log`)).toBeTruthy()
@@ -329,7 +329,7 @@ describe("Conduct dry run", () => {
                 expect(isExisting(`./${ROOT_NAME}/${i}.log`)).toBeTruthy()
             }
             
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/*.log --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/*.log --dry-run`, {
                 stdio: "inherit",
             })
             for (let i = 0 ; i < 10 ; i++) {
@@ -345,7 +345,7 @@ describe("Conduct dry run", () => {
                 expect(isExisting(`./${ROOT_NAME}/logs/${i}.log`)).toBeTruthy()
             }
             
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/logs/*.log --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/logs/*.log --dry-run`, {
                 stdio: "inherit",
             })
             for (let i = 0 ; i < 10 ; i++) {
@@ -365,7 +365,7 @@ describe("Conduct dry run", () => {
             expect(isExisting(`./${ROOT_NAME}/nest/bin`)).toBeTruthy()
             expect(isExisting(`./${ROOT_NAME}/nest/dist/bin`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js "${ROOT_NAME}/**/bin" --dry-run`, {
+            execSync(`node bin/ts-clean.js "${ROOT_NAME}/**/bin" --dry-run`, {
                 stdio: "inherit",
             })
     
@@ -394,7 +394,7 @@ describe("Conduct dry run", () => {
             expect(isExisting(`./${ROOT_NAME}/nest/pub/bin`)).toBeTruthy()
             expect(isExisting(`./${ROOT_NAME}/nest/lib/pub/bin`)).toBeTruthy()
             
-            execSync(`node dist/ts-clean.js "${ROOT_NAME}/**/pub/bin" --dry-run`, {
+            execSync(`node bin/ts-clean.js "${ROOT_NAME}/**/pub/bin" --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/bin`)).toBeTruthy()
@@ -420,7 +420,7 @@ describe("Conduct dry run", () => {
             expect(isExisting(`./${ROOT_NAME}/dist/0.log`)).toBeTruthy()
             expect(isExisting(`./${ROOT_NAME}/bin/0.log`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/**/0.log --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/**/0.log --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/0.log`)).toBeTruthy()
@@ -448,7 +448,7 @@ describe("Conduct dry run", () => {
             expect(isExisting(`./${ROOT_NAME}/tim/0.log`)).toBeTruthy()
             expect(isExisting(`./${ROOT_NAME}/bin/tim/0.log`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/**/tim/0.log --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/**/tim/0.log --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/0.log`)).toBeTruthy()        
@@ -472,7 +472,7 @@ describe("Conduct dry run", () => {
             expect(isExisting(`./${ROOT_NAME}/dist/2.log`)).toBeTruthy()
             expect(isExisting(`./${ROOT_NAME}/bin/3.log`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/**/*.log --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/**/*.log --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/0.log`)).toBeTruthy()
@@ -500,7 +500,7 @@ describe("Conduct dry run", () => {
             expect(isExisting(`./${ROOT_NAME}/tim/4.log`)).toBeTruthy()
             expect(isExisting(`./${ROOT_NAME}/bin/tim/5.log`)).toBeTruthy()
     
-            execSync(`node dist/ts-clean.js ${ROOT_NAME}/**/tim/*.log --dry-run`, {
+            execSync(`node bin/ts-clean.js ${ROOT_NAME}/**/tim/*.log --dry-run`, {
                 stdio: "inherit",
             })
             expect(isExisting(`./${ROOT_NAME}/0.log`)).toBeTruthy()        
@@ -524,7 +524,7 @@ describe("Conduct exclude option", () => {
         expect(isExisting(`./${ROOT_NAME}/nest/bin`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/nest/dist/bin`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js "${ROOT_NAME}/**/bin" --exclude=dist/bin`, {
+        execSync(`node bin/ts-clean.js "${ROOT_NAME}/**/bin" --exclude=dist/bin`, {
             stdio: "inherit",
         })
 
@@ -543,7 +543,7 @@ describe("Conduct exclude option", () => {
         expect(isExisting(`./${ROOT_NAME}/nest/bin`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/nest/dist/bin`)).toBeTruthy()
 
-        execSync(`node dist/ts-clean.js "${ROOT_NAME}/**/bin" -e=dist/bin`, {
+        execSync(`node bin/ts-clean.js "${ROOT_NAME}/**/bin" -e=dist/bin`, {
             stdio: "inherit",
         })
 
@@ -572,7 +572,7 @@ describe("Conduct exclude option", () => {
         expect(isExisting(`./${ROOT_NAME}/nest/pub/bin`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/nest/lib/pub/bin`)).toBeTruthy()
         
-        execSync(`node dist/ts-clean.js "${ROOT_NAME}/**/pub/bin" --exclude=lib/pub/bin`, {
+        execSync(`node bin/ts-clean.js "${ROOT_NAME}/**/pub/bin" --exclude=lib/pub/bin`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/bin`)).toBeTruthy()
@@ -603,7 +603,7 @@ describe("Conduct exclude option", () => {
         expect(isExisting(`./${ROOT_NAME}/nest/pub/bin`)).toBeTruthy()
         expect(isExisting(`./${ROOT_NAME}/nest/lib/pub/bin`)).toBeTruthy()
         
-        execSync(`node dist/ts-clean.js "${ROOT_NAME}/**/pub/bin" -e=lib/pub/bin`, {
+        execSync(`node bin/ts-clean.js "${ROOT_NAME}/**/pub/bin" -e=lib/pub/bin`, {
             stdio: "inherit",
         })
         expect(isExisting(`./${ROOT_NAME}/bin`)).toBeTruthy()
@@ -615,10 +615,54 @@ describe("Conduct exclude option", () => {
     })
 })
 
+describe("Conduct installed option", () => {
+    test("Should delete node_modules when --installled given", async () => {
+        makeFolder("node_modules")
+        expect(isExisting("node_modules")).toBeTruthy()
+
+        execSync(`node bin/ts-clean.js --installed`, {
+            stdio: "inherit",
+        })
+        expect(isExisting("node_modules")).toBeFalsy()
+    })
+
+    test("Should delete node_modules when -i given", async () => {
+        makeFolder("node_modules")
+        expect(isExisting("node_modules")).toBeTruthy()
+
+        execSync(`node bin/ts-clean.js -i`, {
+            stdio: "inherit",
+        })
+        expect(isExisting("node_modules")).toBeFalsy()
+    })
+
+    test("Should delete node_modules in nested directory when --installled given", async () => {        
+        makeFolder(`${ROOT_NAME}/node_modules`)
+        expect(isExisting(`${ROOT_NAME}/node_modules`)).toBeTruthy()
+
+        execSync(`node bin/ts-clean.js --installed`, {
+            stdio: "inherit",
+        })
+        expect(isExisting(`${ROOT_NAME}/node_modules`)).toBeFalsy()
+    })
+
+    test("Should delete node_modules in nested directory when -i given", async () => {
+        makeFolder(`${ROOT_NAME}/node_modules`)
+        expect(isExisting(`${ROOT_NAME}/node_modules`)).toBeTruthy()
+
+        execSync(`node bin/ts-clean.js -i`, {
+            stdio: "inherit",
+        })
+        expect(isExisting(`${ROOT_NAME}/node_modules`)).toBeFalsy()
+    })
+})
+
 describe("Conduct recommend option", () => {
     test("Should dist folder be deleted when --recommend given", async() => {
         makeFile("1.tsbuildinfo")
         makeFolder("lib")
+        makeFolder("dist")
+        makeFolder("bin")
         makeFile("yarn-error.log")
         execSync("yarn build", {
             stdio: "inherit",
@@ -626,20 +670,24 @@ describe("Conduct recommend option", () => {
         expect(isExisting("1.tsbuildinfo")).toBeTruthy()
         expect(isExisting("lib")).toBeTruthy()
         expect(isExisting("dist")).toBeTruthy()
+        expect(isExisting("bin")).toBeTruthy()
         expect(isExisting("yarn-error.log")).toBeTruthy()
     
-        execSync(`node dist/ts-clean.js --recommend`, {
+        execSync(`node bin/ts-clean.js --recommend`, {
             stdio: "inherit",
         })
         expect(isExisting("1.tsbuildinfo")).toBeFalsy()
         expect(isExisting("lib")).toBeFalsy()
         expect(isExisting("dist")).toBeFalsy()
+        expect(isExisting("bin")).toBeFalsy()
         expect(isExisting("yarn-error.log")).toBeFalsy()
     })
     
     test("Should dist folder be deleted when -r given", async() => {
         makeFile("1.tsbuildinfo")
         makeFolder("lib")
+        makeFolder("dist")
+        makeFolder("bin")
         makeFile("yarn-error.log")
         execSync("yarn build", {
             stdio: "inherit",
@@ -647,14 +695,16 @@ describe("Conduct recommend option", () => {
         expect(isExisting("1.tsbuildinfo")).toBeTruthy()
         expect(isExisting("lib")).toBeTruthy()
         expect(isExisting("dist")).toBeTruthy()
+        expect(isExisting("bin")).toBeTruthy()
         expect(isExisting("yarn-error.log")).toBeTruthy()
     
-        execSync(`node dist/ts-clean.js -r`, {
+        execSync(`node bin/ts-clean.js -r`, {
             stdio: "inherit",
         })
         expect(isExisting("1.tsbuildinfo")).toBeFalsy()
         expect(isExisting("lib")).toBeFalsy()
         expect(isExisting("dist")).toBeFalsy()
+        expect(isExisting("bin")).toBeFalsy()
         expect(isExisting("yarn-error.log")).toBeFalsy()
     })
 })

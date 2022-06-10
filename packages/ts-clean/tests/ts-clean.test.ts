@@ -611,10 +611,53 @@ describe("Conduct exclude option", () => {
     })
 })
 
+describe("Conduct installed option", () => {
+    test("Should delete node_modules when --installled given", async () => {
+        makeFolder("node_modules")
+        expect(isExisting("node_modules")).toBeTruthy()
+
+        execSync(`ts-node -r tsconfig-paths/register src/ts-clean.ts --installed`, {
+            stdio: "inherit",
+        })
+        expect(isExisting("node_modules")).toBeFalsy()
+    })
+
+    test("Should delete node_modules when -i given", async () => {
+        makeFolder("node_modules")
+        expect(isExisting("node_modules")).toBeTruthy()
+
+        execSync(`ts-node -r tsconfig-paths/register src/ts-clean.ts -i`, {
+            stdio: "inherit",
+        })
+        expect(isExisting("node_modules")).toBeFalsy()
+    })
+
+    test("Should delete node_modules in nested directory when --installled given", async () => {        
+        makeFolder(`${ROOT_NAME}/node_modules`)
+        expect(isExisting(`${ROOT_NAME}/node_modules`)).toBeTruthy()
+
+        execSync(`ts-node -r tsconfig-paths/register src/ts-clean.ts --installed`, {
+            stdio: "inherit",
+        })
+        expect(isExisting(`${ROOT_NAME}/node_modules`)).toBeFalsy()
+    })
+
+    test("Should delete node_modules in nested directory when -i given", async () => {
+        makeFolder(`${ROOT_NAME}/node_modules`)
+        expect(isExisting(`${ROOT_NAME}/node_modules`)).toBeTruthy()
+
+        execSync(`ts-node -r tsconfig-paths/register src/ts-clean.ts -i`, {
+            stdio: "inherit",
+        })
+        expect(isExisting(`${ROOT_NAME}/node_modules`)).toBeFalsy()
+    })
+})
+
 describe("Conduct recommend option", () => {
     test("Should dist folder be deleted when --recommend given", async() => {
         makeFile("1.tsbuildinfo")
         makeFolder("lib")
+        makeFolder("dist")
         makeFile("yarn-error.log")
         execSync("yarn build", {
             stdio: "inherit",
@@ -622,6 +665,7 @@ describe("Conduct recommend option", () => {
         expect(isExisting("1.tsbuildinfo")).toBeTruthy()
         expect(isExisting("lib")).toBeTruthy()
         expect(isExisting("dist")).toBeTruthy()
+        expect(isExisting("bin")).toBeTruthy()
         expect(isExisting("yarn-error.log")).toBeTruthy()
     
         execSync(`ts-node -r tsconfig-paths/register src/ts-clean.ts --recommend`, {
@@ -630,12 +674,14 @@ describe("Conduct recommend option", () => {
         expect(isExisting("1.tsbuildinfo")).toBeFalsy()
         expect(isExisting("lib")).toBeFalsy()
         expect(isExisting("dist")).toBeFalsy()
+        expect(isExisting("bin")).toBeFalsy()
         expect(isExisting("yarn-error.log")).toBeFalsy()
     })
     
     test("Should dist folder be deleted when -r given", async() => {
         makeFile("1.tsbuildinfo")
         makeFolder("lib")
+        makeFolder("dist")
         makeFile("yarn-error.log")
         execSync("yarn build", {
             stdio: "inherit",
@@ -643,6 +689,7 @@ describe("Conduct recommend option", () => {
         expect(isExisting("1.tsbuildinfo")).toBeTruthy()
         expect(isExisting("lib")).toBeTruthy()
         expect(isExisting("dist")).toBeTruthy()
+        expect(isExisting("bin")).toBeTruthy()
         expect(isExisting("yarn-error.log")).toBeTruthy()
     
         execSync(`ts-node -r tsconfig-paths/register src/ts-clean.ts -r`, {
@@ -651,6 +698,7 @@ describe("Conduct recommend option", () => {
         expect(isExisting("1.tsbuildinfo")).toBeFalsy()
         expect(isExisting("lib")).toBeFalsy()
         expect(isExisting("dist")).toBeFalsy()
+        expect(isExisting("bin")).toBeFalsy()
         expect(isExisting("yarn-error.log")).toBeFalsy()
     })
 })
