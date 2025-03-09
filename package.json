@@ -6,7 +6,7 @@
     "eslint-config-standard": "latest",
     "eslint-plugin-jest": "latest",
     "eslint-plugin-react": "latest",
-    "jest": "^26.0.0",
+    "jest": "^29.7.0",
     "tsconfig-paths": "latest",
     "ts-jest": "^26.0.0",
     "ts-node": "latest",
