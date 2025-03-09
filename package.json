@@ -5,8 +5,8 @@
     "eslint": "latest",
     "eslint-config-standard": "latest",
     "eslint-plugin-jest": "latest",
-    "eslint-plugin-react": "latest",    
-    "jest": "^26.0.0",    
+    "eslint-plugin-react": "latest",
+    "jest": "^26.0.0",
     "tsconfig-paths": "latest",
     "ts-jest": "^26.0.0",
     "ts-node": "latest",
@@ -28,7 +28,7 @@
     "lint": "eslint . --ext .ts",
     "test": "yarn workspaces run test",
     "ts-clean": "yarn workspace @ottohung/ts-clean"
-  },  
+  },
   "version": "0.1.0",
   "workspaces": [
     "packages/*"
